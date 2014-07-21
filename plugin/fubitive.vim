@@ -66,5 +66,4 @@ if !exists('g:fugitive_experimental_browse_handlers')
   let g:fugitive_experimental_browse_handlers = []
 endif
 
-call extend(g:fugitive_experimental_browse_handlers,
-      \ [s:function('s:bitbucket_url')])
+call insert(g:fugitive_experimental_browse_handlers, s:function('s:bitbucket_url'))
