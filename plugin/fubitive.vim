@@ -51,7 +51,7 @@ function! s:bitbucket_url(opts, ...) abort
   elseif a:opts.type == 'blob'
     let url = root . '/src/' . commit . '/' . path
     if get(a:opts, 'line1')
-      let url .= '#' . path . '-' . a:opts.line1
+      let url .= '#' . fnamemodify(path, ':t') . '-' . a:opts.line1
     endif
   elseif a:opts.type == 'tag'
     let commit = matchstr(getline(3),'^tag \zs.*')
