@@ -41,6 +41,9 @@ function! s:bitbucket_url(opts, ...) abort
     let url = root . '/src/' . commit . '/' . path
     if get(a:opts, 'line1')
       let url .= '#' . fnamemodify(path, ':t') . '-' . a:opts.line1
+      if get(a:opts, 'line2')
+        let url .= ':' . a:opts.line2
+      endif
     endif
   else
     let url = root . '/commits/' . commit
