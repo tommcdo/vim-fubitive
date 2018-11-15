@@ -13,14 +13,13 @@ function! s:bitbucket_url(opts, ...) abort
     let domain_pattern .= '\|' . escape(split(domain, '://')[-1], '.')
   endfor
   let repo = matchstr(a:opts.remote,'^\%(https\=://\|git://\|\(ssh://\)\=git@\)\%(.\{-\}@\)\=\zs\('.domain_pattern.'\)[/:].\{-\}\ze\%(\.git\)\=$')
+  let domain = matchstr(a:opts.remote,'^\%(https\=://\|git://\|\(ssh://\)\=git@\)\%(.\{-\}@\)\=\zs\('.domain_pattern.'\)\ze[/:].\{-\}\%(\.git\)\=$')
   if repo ==# ''
     return ''
   endif
-  if index(domains, 'http://' . matchstr(repo, '^[^:/]*')) >= 0
-    let root = 'http://' . substitute(repo,':','/','')
-  else
-    let root = 'https://' . substitute(repo,':','/','')
-  endif
+  let project = matchstr(repo, '\zs\([^/]*\)\ze/[^/]*$')
+  let repo = matchstr(repo, '/\zs\([^/]*\)$')
+  let root = 'https://' .domain . '/projects/' . project . '/repos/' . repo
   if path =~# '^\.git/refs/heads/'
     return root . '/commits/' . path[16:-1]
   elseif path =~# '^\.git/refs/tags/'
@@ -36,13 +35,13 @@ function! s:bitbucket_url(opts, ...) abort
     let commit = a:opts.commit
   endif
   if get(a:opts, 'type', '') ==# 'tree' || a:opts.path =~# '/$'
-    let url = s:sub(root . '/src/' . commit . '/' . path,'/$','')
+    let url = s:sub(root . '/browse/' . path . '?at=' . commit,'/$','')
   elseif get(a:opts, 'type', '') ==# 'blob' || a:opts.path =~# '[^/]$'
-    let url = root . '/src/' . commit . '/' . path
+    let url = root . '/browse/' . path . '?at=' . commit
     if get(a:opts, 'line1')
-      let url .= '#' . fnamemodify(path, ':t') . '-' . a:opts.line1
+      let url .= '#' . a:opts.line1
       if get(a:opts, 'line2')
-        let url .= ':' . a:opts.line2
+        let url .= '-' . a:opts.line2
       endif
     endif
   else
