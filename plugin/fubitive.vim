@@ -17,9 +17,14 @@ function! s:bitbucket_url(opts, ...) abort
   if repo ==# ''
     return ''
   endif
-  let project = matchstr(repo, '\zs\([^/]*\)\ze/[^/]*$')
-  let repo = matchstr(repo, '/\zs\([^/]*\)$')
-  let root = 'https://' .domain . '/projects/' . project . '/repos/' . repo
+  let is_cloud = domain =~? 'bitbucket\.org'
+  if !is_cloud
+    let project = matchstr(repo, '\zs\([^/]*\)\ze/[^/]*$')
+    let repo = matchstr(repo, '/\zs\([^/]*\)$')
+  endif
+  let root = is_cloud
+        \ ? 'https://' . substitute(repo, ':', '/', '')
+        \ : 'https://' . domain . '/projects/' . project . '/repos/' . repo
   if path =~# '^\.git/refs/heads/'
     return root . '/commits/' . path[16:-1]
   elseif path =~# '^\.git/refs/tags/'
@@ -35,13 +40,19 @@ function! s:bitbucket_url(opts, ...) abort
     let commit = a:opts.commit
   endif
   if get(a:opts, 'type', '') ==# 'tree' || a:opts.path =~# '/$'
-    let url = s:sub(root . '/browse/' . path . '?at=' . commit,'/$','')
+    let url = is_cloud
+          \ ? substitute(root . '/src/' . commit . '/' . path, '/$', '', '')
+          \ : substitute(root . '/browse/' . path . '?at=' . commit, '/$', '', '')
   elseif get(a:opts, 'type', '') ==# 'blob' || a:opts.path =~# '[^/]$'
-    let url = root . '/browse/' . path . '?at=' . commit
+    let url = is_cloud
+          \ ? root . '/src/' . commit . '/' . path
+          \ : root . '/browse/' . path . '?at=' . commit
     if get(a:opts, 'line1')
-      let url .= '#' . a:opts.line1
+      let url .= is_cloud
+            \ ? '#' . fnamemodify(path, ':t') . '-' . a:opts.line1
+            \ : '#' . a:opts.line1
       if get(a:opts, 'line2')
-        let url .= '-' . a:opts.line2
+        let url .= (is_cloud ? ':' : '-') . a:opts.line2
       endif
     endif
   else
