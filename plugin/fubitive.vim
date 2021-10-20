@@ -1,3 +1,8 @@
+if exists( 'g:fubitive_loaded' )
+    finish
+endif
+let g:fubitive_loaded = 1
+
 function! s:function(name) abort
   return function(substitute(a:name,'^s:',matchstr(expand('<sfile>'), '<SNR>\d\+_'),''))
 endfunction
