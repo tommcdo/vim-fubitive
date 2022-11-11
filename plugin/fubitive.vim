@@ -27,9 +27,13 @@ function! s:bitbucket_url(opts, ...) abort
     let project = matchstr(repo, '\zs\([^/]*\)\ze/[^/]*$')
     let repo = matchstr(repo, '/\zs\([^/]*\)$')
   endif
+  let protocol = matchstr(a:opts.remote,'^\(https\=://\)')
+  if protocol->empty()
+      let protocol = 'https://'
+  endif
   let root = is_cloud
-        \ ? 'https://' . substitute(repo, ':', '/', '')
-        \ : 'https://' . domain . '/projects/' . project . '/repos/' . repo
+        \ ? protocol . substitute(repo, ':', '/', '')
+        \ : protocol . domain . '/projects/' . project . '/repos/' . repo
   if path =~# '^\.git/refs/heads/'
     return root . '/commits/' . path[16:-1]
   elseif path =~# '^\.git/refs/tags/'
