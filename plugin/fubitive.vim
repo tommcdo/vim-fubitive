@@ -28,7 +28,7 @@ function! s:bitbucket_url(opts, ...) abort
     let repo = matchstr(repo, '/\zs\([^/]*\)$')
   endif
   let protocol = matchstr(a:opts.remote,'^\(https\=://\)')
-  if protocol->empty()
+  if empty(protocol)
       let protocol = 'https://'
   endif
   let root = is_cloud
