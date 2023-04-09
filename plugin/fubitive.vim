@@ -31,9 +31,10 @@ function! s:bitbucket_url(opts, ...) abort
   if empty(protocol)
       let protocol = 'https://'
   endif
+  let bitbucket_context_path = get(g:, 'fubitive_domain_context_path', '')
   let root = is_cloud
         \ ? protocol . substitute(repo, ':', '/', '')
-        \ : protocol . domain . '/projects/' . project . '/repos/' . repo
+        \ : protocol . domain . bitbucket_context_path . '/projects/' . project . '/repos/' . repo
   if path =~# '^\.git/refs/heads/'
     return root . '/commits/' . path[16:-1]
   elseif path =~# '^\.git/refs/tags/'
@@ -73,6 +74,10 @@ endfunction
 
 if !exists('g:fugitive_browse_handlers')
   let g:fugitive_browse_handlers = []
+endif
+
+if exists('g:fubitive_domain_context_path')
+  let g:fubitive_domain_context_path = '/' . g:fubitive_domain_context_path
 endif
 
 call insert(g:fugitive_browse_handlers, s:function('s:bitbucket_url'))

@@ -13,3 +13,12 @@ following to your `.vimrc` (taking care to escape special characters):
 ```vim
 let g:fubitive_domain_pattern = 'code\.example\.com'
 ```
+
+For Bitbucket instances that are not installed in the root of the domain, for 
+example under `code.example.com/bitbucket/`, add the following line to 
+your `.vimrc`.
+
+```vim
+let g:fubitive_domain_pattern = 'code\.example\.com'
+let g:fubitive_domain_context_path = 'bitbucket'
+```
