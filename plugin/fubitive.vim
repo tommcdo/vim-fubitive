@@ -56,7 +56,7 @@ function! s:bitbucket_url(opts, ...) abort
     let commit = fugitive#RevParse('HEAD')
     let url = is_cloud
           \ ? root . '/src/' . commit . '/' . path
-          \ : root . '/browse/' . path . '?at=' . commit
+          \ : root . '/browse/' . path . '?until=' . commit
     if get(a:opts, 'line1')
       let url .= is_cloud
             \ ? '#' . fnamemodify(path, ':t') . '-' . a:opts.line1
