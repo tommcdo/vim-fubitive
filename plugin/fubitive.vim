@@ -53,7 +53,8 @@ function! s:bitbucket_url(opts, ...) abort
           \ ? substitute(root . '/src/' . commit . '/' . path, '/$', '', '')
           \ : substitute(root . '/browse/' . path . '?at=' . commit, '/$', '', '')
   elseif get(a:opts, 'type', '') ==# 'blob' || a:opts.path =~# '[^/]$'
-    let commit = fugitive#RevParse('HEAD')
+    let objSpec = split(fugitive#Object(), ':')
+    let commit = len(objSpec) == 2 ? objSpec[0] : fugitive#RevParse('HEAD')
     let url = is_cloud
           \ ? root . '/src/' . commit . '/' . path
           \ : root . '/browse/' . path . '?at=' . commit
