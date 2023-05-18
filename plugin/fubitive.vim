@@ -39,7 +39,7 @@ function! s:bitbucket_url(opts, ...) abort
   endif
   let root = protocol . (is_cloud
         \ ? substitute(repo, ':', '/', '')
-        \ : join([domain, s:domain_context_path(), 'projects', project, 'repos', repo], '/'))
+        \ : domain . s:domain_context_path() . '/projects/' . project . '/repos/' .  repo)
   if path =~# '^\.git/refs/heads/'
     return root . '/commits/' . path[16:-1]
   elseif path =~# '^\.git/refs/tags/'
