@@ -7,6 +7,12 @@ function! s:function(name) abort
   return function(substitute(a:name,'^s:',matchstr(expand('<sfile>'), '<SNR>\d\+_'),''))
 endfunction
 
+function! s:domain_context_path()
+  return exists('g:fubitive_domain_context_path')
+    \ ? '/' . g:fubitive_domain_context_path
+    \ : ''
+endfunction
+
 function! s:bitbucket_url(opts, ...) abort
   if a:0 || type(a:opts) != type({})
     return ''
@@ -31,9 +37,9 @@ function! s:bitbucket_url(opts, ...) abort
   if empty(protocol)
       let protocol = 'https://'
   endif
-  let root = is_cloud
-        \ ? protocol . substitute(repo, ':', '/', '')
-        \ : protocol . domain . '/projects/' . project . '/repos/' . repo
+  let root = protocol . (is_cloud
+        \ ? substitute(repo, ':', '/', '')
+        \ : domain . s:domain_context_path() . '/projects/' . project . '/repos/' .  repo)
   if path =~# '^\.git/refs/heads/'
     return root . '/commits/' . path[16:-1]
   elseif path =~# '^\.git/refs/tags/'
