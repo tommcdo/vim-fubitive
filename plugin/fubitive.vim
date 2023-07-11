@@ -7,6 +7,12 @@ function! s:function(name) abort
   return function(substitute(a:name,'^s:',matchstr(expand('<sfile>'), '<SNR>\d\+_'),''))
 endfunction
 
+function! s:default_protocol()
+  return exists('g:fubitive_default_protocol')
+    \ ? g:fubitive_default_protocol
+    \ : 'https://'
+endfunction
+
 function! s:domain_context_path()
   return exists('g:fubitive_domain_context_path')
     \ ? '/' . g:fubitive_domain_context_path
@@ -35,7 +41,7 @@ function! s:bitbucket_url(opts, ...) abort
   endif
   let protocol = matchstr(a:opts.remote,'^\(https\=://\)')
   if empty(protocol)
-      let protocol = 'https://'
+      let protocol = s:default_protocol()
   endif
   let root = protocol . (is_cloud
         \ ? substitute(repo, ':', '/', '')
