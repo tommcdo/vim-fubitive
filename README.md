@@ -22,3 +22,10 @@ your `.vimrc`.
 let g:fubitive_domain_pattern = 'code\.example\.com'
 let g:fubitive_domain_context_path = 'bitbucket'
 ```
+
+By default, fubitive will assume `https://` when building URLs. 
+To change this, set the `g:fubitive_default_protocol` variable:
+
+```vim
+let g:fubitive_default_protocol = 'http://'
+```
