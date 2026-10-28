@@ -24,7 +24,7 @@ function! s:bitbucket_url(opts, ...) abort
     return ''
   endif
   let path = substitute(a:opts.path, '^/', '', '')
-  let domain_pattern = exists('g:fubitive_domain_pattern') ? g:fubitive_domain_pattern : 'bitbucket\.org'
+  let domain_pattern = exists('g:fubitive_domain_pattern') ? g:fubitive_domain_pattern : '\%(ssh\.\)\=bitbucket\.org'
   let domains = exists('g:fugitive_bitbucket_domains') ? g:fugitive_bitbucket_domains : []
   for domain in domains
     let domain_pattern .= '\|' . escape(split(domain, '://')[-1], '.')
@@ -35,6 +35,10 @@ function! s:bitbucket_url(opts, ...) abort
     return ''
   endif
   let is_cloud = domain =~? 'bitbucket\.org'
+  if is_cloud
+    " Strip ssh. from browser URL
+    let repo = substitute(repo, '^ssh\.', '', '')
+  endif
   if !is_cloud
     let project = matchstr(repo, '\zs\([^/]*\)\ze/[^/]*$')
     let repo = matchstr(repo, '/\zs\([^/]*\)$')
